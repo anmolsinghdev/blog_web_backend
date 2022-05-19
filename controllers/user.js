@@ -13,9 +13,12 @@ exports.getAllUser = async (req, res, next) => {
 };
 exports.createUser = async (req, res, next) => {
     try {
+        const firstname = req.body.firstname;
+        const lastname = req.body.lastname;
         const username = req.body.username;
         const password = req.body.password;
         const email = req.body.email;
+
 
         const existsData = await userModel.exists({ username: username })
         if (existsData) {
@@ -26,6 +29,8 @@ exports.createUser = async (req, res, next) => {
         } else {
             const hashPassword = await bcrypt.hash(password, saltRounds);
             const data = await userModel.create({
+                firstname: firstname,
+                lastname: lastname,
                 username: username,
                 password: hashPassword,
                 email: email
@@ -45,7 +50,6 @@ exports.createUser = async (req, res, next) => {
 exports.loginUser = async (req, res, next) => {
 
     try {
-        const email = req.body.email;
         const username = req.body.username;
         const username2 = req.body.username;
         const password = req.body.password;
@@ -67,6 +71,7 @@ exports.loginUser = async (req, res, next) => {
                 return res.send({
                     status: true,
                     token: jwtKey,
+                    name: `${databaseData.firstname} ${databaseData.lastname}`,
                     Message: 'Login Successfully'
                 })
             }
